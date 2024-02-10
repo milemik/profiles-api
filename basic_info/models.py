@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from common.models import BaseUUIDModel
@@ -32,7 +33,7 @@ class SchoolInfo(BaseUUIDModel):
         OTHER = 5
 
     basic_info = models.OneToOneField(MyBasicInfo, related_name="school_info", on_delete=models.CASCADE)
-    type = models.IntegerField(choices=SchoolType)
+    type = models.IntegerField(choices=SchoolType.choices, default=SchoolType.OTHER)
     school_name = models.CharField(max_length=150, null=True, blank=True)
     school_town = models.CharField(max_length=100, null=True, blank=True)
     start_year = models.IntegerField(null=True, blank=True)
