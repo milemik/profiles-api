@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "imileticdev-site"
+version = "0.1.0"
+description = "My new website"
+authors = ["milemik <milemik68@gmail.com>"]
+readme = "README.md"
+packages = [{include = "imileticdev_site"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "4.2"
+djangorestframework = "3.14.0"
+django-environ = "0.11.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
