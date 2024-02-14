@@ -70,7 +70,7 @@ class BasicViewInfoTestCase(TestCase):
         self.api_client = APIClient()
 
     def test_basic_info_view_init(self) -> None:
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(3):
             response = self.api_client.get(self.base_url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -81,5 +81,103 @@ class BasicViewInfoTestCase(TestCase):
                 "age": MyBasicInfo.objects.first().age,
                 "gender": "",
                 "current_status": "unavailable",
+                "school_info": [],
             },
+        )
+
+    def test_basic_info_view_with_school(self) -> None:
+        SchoolInfo.objects.create(basic_info=self.basic_info)
+        SchoolInfo.objects.create(basic_info=self.basic_info, type=SchoolInfo.SchoolType.HIGH_SCHOOL)
+        SchoolInfo.objects.create(basic_info=self.basic_info, type=SchoolInfo.SchoolType.COLLAGE_SCHOOL)
+        with self.assertNumQueries(3):
+            response = self.api_client.get(self.base_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "first_name": "Ivan",
+                "last_name": "Milena",
+                "age": MyBasicInfo.objects.first().age,
+                "gender": "",
+                "current_status": "unavailable",
+                "school_info": [
+                    {"end_year": None, "school_name": None, "school_town": None, "start_year": None, "type": 2},
+                    {
+                        "end_year": None,
+                        "school_name": None,
+                        "school_town": None,
+                        "start_year": None,
+                        "type": SchoolInfo.SchoolType.COLLAGE_SCHOOL,
+                    },
+                    {"end_year": None, "school_name": None, "school_town": None, "start_year": None, "type": 5},
+                ],
+            },
+            "School is ordered by type",
+        )
+
+    def test_basic_info_with_work_experience_init(self):
+        with self.assertNumQueries(3):
+            response = self.api_client.get(self.base_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "first_name": "Ivan",
+                "last_name": "Milena",
+                "age": MyBasicInfo.objects.first().age,
+                "gender": "",
+                "current_status": "unavailable",
+                "school_info": [],
+                "work_experience": [],
+            },
+            "School is ordered by type",
+        )
+
+    def test_basic_info_with_work_experience(self):
+        WorkExperience.objects.create(
+            basic_info=self.basic_info,
+            company="JTC",
+            role="intern",
+            work_description="Very nice experience",
+            start_year=2020,
+            end_year=2020,
+        )
+        WorkExperience.objects.create(
+            basic_info=self.basic_info,
+            company="NTC",
+            role="junior",
+            work_description="Very nice experience",
+            start_year=2021,
+            end_year=2021,
+        )
+        with self.assertNumQueries(3):
+            response = self.api_client.get(self.base_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "first_name": "Ivan",
+                "last_name": "Milena",
+                "age": MyBasicInfo.objects.first().age,
+                "gender": "",
+                "current_status": "unavailable",
+                "school_info": [],
+                "work_experience": [
+                    {
+                        "company": "NTC",
+                        "end_year": 2021,
+                        "role": "junior",
+                        "start_year": 2021,
+                        "work_description": "Very nice experience",
+                    },
+                    {
+                        "company": "JTC",
+                        "end_year": 2020,
+                        "role": "intern",
+                        "start_year": 2020,
+                        "work_description": "Very nice experience",
+                    },
+                ],
+            },
+            "ordered by start_year",
         )

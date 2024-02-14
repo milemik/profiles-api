@@ -37,7 +37,7 @@ class SchoolInfo(BaseUUIDModel):
         COURSE = 4
         OTHER = 5
 
-    basic_info = models.OneToOneField(MyBasicInfo, related_name="school_info", on_delete=models.CASCADE)
+    basic_info = models.ForeignKey(MyBasicInfo, related_name="school_info", on_delete=models.CASCADE)
     type = models.IntegerField(choices=SchoolType.choices, default=SchoolType.OTHER)
     school_name = models.CharField(max_length=150, null=True, blank=True)
     school_town = models.CharField(max_length=100, null=True, blank=True)
@@ -49,7 +49,7 @@ class SchoolInfo(BaseUUIDModel):
 
 
 class WorkExperience(BaseUUIDModel):
-    basic_info = models.OneToOneField(MyBasicInfo, related_name="work_experience", on_delete=models.CASCADE)
+    basic_info = models.ForeignKey(MyBasicInfo, related_name="work_experience", on_delete=models.CASCADE)
     company = models.CharField(max_length=100, null=False, blank=False)
     role = models.CharField(max_length=100, null=False, blank=False)
     work_description = models.TextField(null=True, blank=True)
