@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from common.models import BaseUUIDModel
 
@@ -19,6 +20,10 @@ class MyBasicInfo(BaseUUIDModel):
     current_status = models.CharField(
         choices=WorkStatus.choices, default=WorkStatus.UNAVAILABLE, max_length=50, null=False, blank=False
     )
+
+    @property
+    def age(self) -> int:
+        return timezone.now().year - self.birth_date.year
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"

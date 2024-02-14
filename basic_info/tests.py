@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.utils import timezone
 
 from basic_info.models import MyBasicInfo, SchoolInfo, WorkExperience
 
@@ -22,6 +23,7 @@ class MyBasicInfoTestCase(TestCase):
         MyBasicInfo.objects.create(user=self.user, birth_date="1970-01-01")
         self.assertEqual(1, MyBasicInfo.objects.count())
         self.assertEqual(MyBasicInfo.WorkStatus.UNAVAILABLE, MyBasicInfo.objects.first().current_status)
+        self.assertEqual(MyBasicInfo.objects.first().age, timezone.now().year - 1970)
 
 
 class SchoolInfoTestCase(TestCase):
