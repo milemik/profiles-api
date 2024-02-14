@@ -9,9 +9,6 @@ from rest_framework.test import APIClient
 from basic_info.models import MyBasicInfo, SchoolInfo, WorkExperience
 
 
-# Create your tests here.
-
-
 # Test models
 class MyBasicInfoTestCase(TestCase):
     def setUp(self) -> None:
@@ -59,6 +56,9 @@ class WorkExperienceTestCase(TestCase):
         self.assertEqual(1, WorkExperience.objects.count())
 
 
+# Test Views
+
+
 class BasicViewInfoTestCase(TestCase):
     def setUp(self) -> None:
         user = User.objects.create(username="testUser")
@@ -70,7 +70,8 @@ class BasicViewInfoTestCase(TestCase):
         self.api_client = APIClient()
 
     def test_basic_info_view_init(self) -> None:
-        response = self.api_client.get(self.base_url)
+        with self.assertNumQueries(1):
+            response = self.api_client.get(self.base_url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
