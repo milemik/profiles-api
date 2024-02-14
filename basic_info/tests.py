@@ -77,7 +77,7 @@ class BasicViewInfoTestCase(TestCase):
             {
                 "first_name": "Ivan",
                 "last_name": "Milena",
-                "age": 54,
+                "age": MyBasicInfo.objects.first().age,
                 "gender": "",
                 "current_status": "unavailable",
             },
